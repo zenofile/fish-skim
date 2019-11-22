@@ -24,3 +24,11 @@ if functions -q skim_key_bindings
 else if functions -q fzf_key_bindings
     fzf_key_bindings
 end
+
+set -l name (basename (status -f) .fish){_uninstall}
+
+function $name --on-event $name
+  bind --erase \ct
+  bind --erase \cr
+  bind --erase \ec
+end
