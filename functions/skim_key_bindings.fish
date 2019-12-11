@@ -46,7 +46,7 @@ function skim_key_bindings
       if [ -n "$SKIM_HIST_TIME_SHOW" ]
         history -z --show-time="$SKIM_HIST_TIME_FMT" | eval (__skimcmd) --nth 2.. --read0 --print0 -q '(commandline)' | read -zd "$SKIM_HIST_TIME_DLM" _ result
       else
-        history -z | eval (__skimcmd) --read0 --print0 -q '(commandline)' | read -lz result
+        history -z | eval (__skimcmd) --read0 --print0 -q '(commandline)' | read -z result
       end
       if [ -n "$result" ]
         commandline -- $result
