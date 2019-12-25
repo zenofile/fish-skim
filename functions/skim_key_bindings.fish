@@ -55,6 +55,32 @@ function skim_key_bindings
     commandline -f repaint
   end
 
+function skim-history-delete-widget -d "Delete history command"
+    set -q SKIM_TMUX_HEIGHT; or set SKIM_TMUX_HEIGHT 40%
+    set -q SKIM_HIST_TIME_FMT; or set SKIM_HIST_TIME_FMT '[%d/%m/%y %T]: '
+    set -q SKIM_HIST_TIME_DLM; or set SKIM_HIST_TIME_DLM ': '
+    begin
+      set -lx SKIM_DEFAULT_OPTIONS "--height $SKIM_TMUX_HEIGHT $SKIM_DEFAULT_OPTIONS --tiebreak=index --bind=ctrl-r:toggle-sort $SKIM_CTRL_R_OPTS -m"
+      if [ -n "$SKIM_HIST_TIME_SHOW" ]
+        history -z --show-time="$SKIM_HIST_TIME_FMT" | eval (__skimcmd) -m --nth 2.. --read0 --print0 -q '(commandline)' \
+        | while read -zd "$SKIM_HIST_TIME_DLM" _ result
+            if [ -n "$result" ]
+              history delete --case-sensitive --exact -- $result
+              history save
+            end
+          end
+      else
+        history -z | eval (__skimcmd) -m --read0 --print0 -q '(commandline)' | while read -z result
+          if [ -n "$result" ]
+            history delete --case-sensitive --exact -- $result
+            history save
+          end
+        end
+      end
+    end
+   commandline -f repaint
+  end
+
   function skim-cd-widget -d "Change directory"
     set -l commandline (__skim_parse_commandline)
     set -l dir $commandline[1]
@@ -92,6 +118,7 @@ function skim_key_bindings
   bind \ct skim-file-widget
   bind \cr skim-history-widget
   bind \ec skim-cd-widget
+  bind '[3;5~' skim-history-delete-widget
 
   if bind -M insert > /dev/null 2>&1
     bind -M insert \ct skim-file-widget
