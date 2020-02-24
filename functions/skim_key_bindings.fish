@@ -70,7 +70,8 @@ function skim-history-delete-widget -d "Delete history command"
             end
           end
       else
-        history -z | eval (__skimcmd) -m --read0 --print0 -q '(commandline)' | while read -z result
+        history -z | eval (__skimcmd) -m --read0 --print0 -q '(commandline)' \
+        | while read -z result
           if [ -n "$result" ]
             history delete --case-sensitive --exact -- $result
             history save
@@ -108,10 +109,11 @@ function skim-history-delete-widget -d "Delete history command"
   function __skimcmd
     set -q SKIM_TMUX; or set SKIM_TMUX 0
     set -q SKIM_TMUX_HEIGHT; or set SKIM_TMUX_HEIGHT 40%
+    set -q SKIM_CUSTOM_ARGS; or set SKIM_CUSTOM_ARGS ""
     if [ $SKIM_TMUX -eq 1 ]
-      echo "sk-tmux -d$SKIM_TMUX_HEIGHT"
+      echo "sk-tmux -d$SKIM_TMUX_HEIGHT $SKIM_CUSTOM_ARGS"
     else
-      echo "sk"
+      echo "sk $SKIM_CUSTOM_ARGS"
     end
   end
 
