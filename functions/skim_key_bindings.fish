@@ -44,7 +44,7 @@ function skim_key_bindings
     begin
       set -lx SKIM_DEFAULT_OPTIONS "--height $SKIM_TMUX_HEIGHT $SKIM_DEFAULT_OPTIONS --tiebreak=index --bind=ctrl-r:toggle-sort $SKIM_CTRL_R_OPTS -m"
       if [ -n "$SKIM_HIST_TIME_SHOW" ]
-        history -z --show-time="$SKIM_HIST_TIME_FMT" | eval (__skimcmd) --nth 2.. --read0 --print0 -q '(commandline)' | read -zd "$SKIM_HIST_TIME_DLM" _ result
+        history -z --show-time="$SKIM_HIST_TIME_FMT" | eval (__skimcmd) --nth 2.. --delimiter="$SKIM_HIST_TIME_DLM" --read0 --print0 -q '(commandline)' | read -zd "$SKIM_HIST_TIME_DLM" _ result
       else
         history -z | eval (__skimcmd) --read0 --print0 -q '(commandline)' | read -z result
       end
@@ -62,7 +62,7 @@ function skim-history-delete-widget -d "Delete history command"
     begin
       set -lx SKIM_DEFAULT_OPTIONS "--height $SKIM_TMUX_HEIGHT $SKIM_DEFAULT_OPTIONS --tiebreak=index --bind=ctrl-r:toggle-sort $SKIM_CTRL_R_OPTS -m"
       if [ -n "$SKIM_HIST_TIME_SHOW" ]
-        history -z --show-time="$SKIM_HIST_TIME_FMT" | eval (__skimcmd) -m --nth 2.. --read0 --print0 -q '(commandline)' \
+        history -z --show-time="$SKIM_HIST_TIME_FMT" | eval (__skimcmd) -m --nth 2.. --delimiter="$SKIM_HIST_TIME_DLM" --read0 --print0 -q '(commandline)' \
         | while read -zd "$SKIM_HIST_TIME_DLM" _ result
             if [ -n "$result" ]
               history delete --case-sensitive --exact -- $result
